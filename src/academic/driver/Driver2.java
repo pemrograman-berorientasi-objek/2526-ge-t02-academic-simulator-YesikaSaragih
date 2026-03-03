@@ -3,55 +3,52 @@
  * @author 12S24024 Yesika Nadia Saragih
  */
 
-package academic.driver;
+ package academic.driver;
 
-import academic.model.Student; // Import kelas Student dari paket academic.model
-import java.util.ArrayList;
-import java.util.Scanner;
+import academic.model.Student;   // Mengimpor kelas Student dari paket academic.model
+import java.util.Scanner;       // Mengimpor kelas Scanner untuk membaca input pengguna
+import java.util.ArrayList;     // Mengimpor kelas ArrayList karena jumlah mahasiswa tidak pasti
 
 public class Driver2 {
+    // Menggunakan ArrayList untuk menyimpan objek-objek Student
+    // ArrayList lebih fleksibel daripada array statis karena ukurannya bisa bertambah otomatis.
+    private static ArrayList<Student> students = new ArrayList<>();
+
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        ArrayList<Student> studentList = new ArrayList<>(); // Menggunakan ArrayList untuk penyimpanan dinamis
+        Scanner scanner = new Scanner(System.in); // Membuat objek Scanner untuk membaca input dari konsol
+        String line; // Variabel untuk menyimpan setiap baris input
 
-        System.out.println("Masukkan data mahasiswa (NIM#Nama#Tahun Masuk#Program Studi).");
-        // Tidak ada prompt khusus untuk '---' tetapi fungsionalitasnya tetap ada.
+        // Loop untuk membaca input baris demi baris hingga pengguna mengetik "---"
+        while (scanner.hasNextLine()) { // Memeriksa apakah ada baris input berikutnya
+            line = scanner.nextLine(); // Membaca satu baris input
 
-        while (true) {
-            System.out.print("> ");
-            String inputLine = scanner.nextLine();
-
-            if (inputLine.equals("---")) {
-                break; // Keluar dari loop jika input adalah "---"
+            if (line.equals("---")) { // Jika baris input adalah "---", hentikan proses input
+                break;
             }
 
-            // Memecah baris input berdasarkan delimiter '#'
-            String[] segments = inputLine.split("#");
+            // Memisahkan string input berdasarkan karakter "#"
+            // Contoh input: 12S20999#Wiro Sableng#2020#Information Systems
+            String[] parts = line.split("#"); 
 
-            // Memastikan format input benar (memiliki 4 segmen)
-            if (segments.length == 4) {
-                String studentId = segments[0].trim();
-                String name = segments[1].trim();
-                String entryYear = segments[2].trim();
-                String major = segments[3].trim();
+            // Memastikan input memiliki 4 bagian yang diharapkan (nim, name, entranceYear, studyProgram)
+            if (parts.length == 4) {
+                String nim = parts[0];
+                String name = parts[1];
+                int entranceYear = Integer.parseInt(parts[2]); // Mengubah string angkatan menjadi integer
+                String studyProgram = parts[3];
 
-                // Membuat objek Student dan menambahkannya ke ArrayList
-                Student student = new Student(studentId, name, entryYear, major);
-                studentList.add(student);
+                // Membuat objek Student baru dan menambahkannya ke ArrayList
+                students.add(new Student(nim, name, entranceYear, studyProgram));
             } else {
-                System.out.println("Format input tidak valid. Harap gunakan: NIM#Nama#Tahun Masuk#Program Studi");
+                System.err.println("Format input tidak valid: " + line);
             }
         }
 
-        System.out.println("\n--- Data Mahasiswa yang Tersimpan ---");
-        if (studentList.isEmpty()) {
-            System.out.println("Tidak ada data mahasiswa yang dimasukkan.");
-        } else {
-            for (Student student : studentList) {
-                System.out.println(student); // Mencetak setiap objek Student menggunakan toString() yang sudah diperbarui
-            }
+        // Setelah semua input diproses, tampilkan semua student yang telah disimpan
+        for (Student student : students) { // Menggunakan enhanced for loop untuk iterasi ArrayList
+            System.out.println(student.toString()); // Memanggil toString() untuk format output yang diinginkan
         }
 
-        scanner.close(); // Menutup scanner
+        scanner.close(); // Menutup objek Scanner untuk mencegah kebocoran sumber daya
     }
 }

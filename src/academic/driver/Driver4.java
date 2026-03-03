@@ -12,74 +12,96 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Driver4 {
+    // Menggunakan ArrayList untuk menyimpan setiap jenis entitas
+    private static ArrayList<Course> courses = new ArrayList<>();
+    private static ArrayList<Student> students = new ArrayList<>();
+    private static ArrayList<Enrollment> enrollments = new ArrayList<>();
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Course> courseList = new ArrayList<>();
-        ArrayList<Student> studentList = new ArrayList<>();
-        ArrayList<Enrollment> enrollmentList = new ArrayList<>();
+        String line;
 
-        System.out.println("Masukkan data (course-add#... atau student-add#... atau enrollment-add#...).");
-        System.out.println("Ketik '---' untuk berhenti."); // Instruksi tetap ada untuk user baru
+        // --- Bagian 1: Memproses Input ---
+        while (scanner.hasNextLine()) {
+            line = scanner.nextLine();
 
-        while (true) {
-            System.out.print("> ");
-            String inputLine = scanner.nextLine();
-
-            if (inputLine.equals("---")) {
-                break; // Keluar dari loop jika input adalah "---"
+            if (line.equals("---")) {
+                break; // Hentikan input jika bertemu "---"
             }
 
-            // Memeriksa prefix input untuk menentukan jenis entitas
-            if (inputLine.startsWith("course-add#")) {
-                String data = inputLine.substring("course-add#".length());
-                String[] segments = data.split("#");
-                if (segments.length == 4) {
-                    Course course = new Course(segments[0].trim(), segments[1].trim(), segments[2].trim(), segments[3].trim());
-                    courseList.add(course);
-                } else {
-                    System.out.println("Format input Course tidak valid.");
-                }
-            } else if (inputLine.startsWith("student-add#")) {
-                String data = inputLine.substring("student-add#".length());
-                String[] segments = data.split("#");
-                if (segments.length == 4) {
-                    Student student = new Student(segments[0].trim(), segments[1].trim(), segments[2].trim(), segments[3].trim());
-                    studentList.add(student);
-                } else {
-                    System.out.println("Format input Student tidak valid.");
-                }
-            } else if (inputLine.startsWith("enrollment-add#")) {
-                String data = inputLine.substring("enrollment-add#".length());
-                String[] segments = data.split("#");
-                // Enrollment memiliki 4 segmen input, grade akan otomatis 'None'
-                if (segments.length == 4) {
-                    Enrollment enrollment = new Enrollment(segments[0].trim(), segments[1].trim(), segments[2].trim(), segments[3].trim());
-                    enrollmentList.add(enrollment);
-                } else {
-                    System.out.println("Format input Enrollment tidak valid.");
-                }
-            } else {
-                System.out.println("Perintah tidak dikenal atau format salah. Gunakan 'course-add#', 'student-add#', atau 'enrollment-add#'.");
+            // Pisahkan perintah dari sisa data
+            String[] segments = line.split("#");
+            if (segments.length < 1) {
+                System.err.println("Input tidak valid: " + line);
+                continue; // Lanjutkan ke baris berikutnya
+            }
+
+            String command = segments[0]; // Perintah seperti "course-add", "student-add", "enrollment-add"
+            
+            // Mengambil sisa data setelah perintah
+            String[] dataParts = new String[segments.length - 1];
+            System.arraycopy(segments, 1, dataParts, 0, segments.length - 1);
+
+            switch (command) {
+                case "course-add":
+                    // Format: course-add#CODE#NAME#CREDITS#GRADE
+                    if (dataParts.length == 4) {
+                        String code = dataParts[0];
+                        String name = dataParts[1];
+                        int credits = Integer.parseInt(dataParts[2]);
+                        String grade = dataParts[3];
+                        courses.add(new Course(code, name, credits, grade));
+                    } else {
+                        System.err.println("Format input course-add tidak valid: " + line);
+                    }
+                    break;
+                case "student-add":
+                    // Format: student-add#NIM#NAME#ENTRANCE_YEAR#STUDY_PROGRAM
+                    if (dataParts.length == 4) {
+                        String nim = dataParts[0];
+                        String name = dataParts[1];
+                        int entranceYear = Integer.parseInt(dataParts[2]);
+                        String studyProgram = dataParts[3];
+                        students.add(new Student(nim, name, entranceYear, studyProgram));
+                    } else {
+                        System.err.println("Format input student-add tidak valid: " + line);
+                    }
+                    break;
+                case "enrollment-add":
+                    // Format: enrollment-add#COURSE_CODE#STUDENT_NIM#ACADEMIC_YEAR#SEMESTER
+                    // Grade akan default "None" oleh konstruktor Enrollment
+                    if (dataParts.length == 4) {
+                        String courseCode = dataParts[0];
+                        String studentNim = dataParts[1];
+                        String academicYear = dataParts[2];
+                        String semester = dataParts[3];
+                        enrollments.add(new Enrollment(courseCode, studentNim, academicYear, semester));
+                    } else {
+                        System.err.println("Format input enrollment-add tidak valid: " + line);
+                    }
+                    break;
+                default:
+                    System.err.println("Perintah tidak dikenal: " + command);
+                    break;
             }
         }
 
-        System.out.println("\n--- Data Tersimpan ---");
-
-        // Menampilkan Courses
-        for (Course course : courseList) {
-            System.out.println(course);
+        // --- Bagian 2: Menampilkan Output sesuai Urutan ---
+        // 1. Tampilkan Course
+        for (Course course : courses) {
+            System.out.println(course.toString());
         }
 
-        // Menampilkan Students
-        for (Student student : studentList) {
-            System.out.println(student);
+        // 2. Tampilkan Student
+        for (Student student : students) {
+            System.out.println(student.toString());
         }
 
-        // Menampilkan Enrollments
-        for (Enrollment enrollment : enrollmentList) {
-            System.out.println(enrollment);
+        // 3. Tampilkan Enrollment
+        for (Enrollment enrollment : enrollments) {
+            System.out.println(enrollment.toString());
         }
 
-        scanner.close(); // Menutup scanner
+        scanner.close(); // Tutup scanner
     }
 }

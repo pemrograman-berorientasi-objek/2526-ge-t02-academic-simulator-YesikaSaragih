@@ -5,53 +5,63 @@
 
 package academic.driver;
 
-import academic.model.Course; // Import kelas Course dari paket academic.model
-import java.util.ArrayList;
-import java.util.Scanner;
+/**
+ * @author 12S24023 Jaya Bestina Simbolon
+ * @author 12S24023 Jaya Bestina Simbolon
+ */  
+
+// File: academic/driver/Driver1.java
+
+import academic.model.Course; // Mengimpor kelas Course dari paket academic.model
+import java.util.Scanner;    // Mengimpor kelas Scanner untuk membaca input pengguna
 
 public class Driver1 {
+    // Array untuk menyimpan objek-objek Course.
+    // Ukuran awal bisa diperkirakan atau menggunakan ArrayList jika jumlahnya tidak pasti.
+    // Untuk contoh ini, kita asumsikan maksimal 100 course, Anda bisa menyesuaikannya.
+    private static Course[] courses = new Course[100];
+    private static int courseCount = 0; // Menghitung jumlah course yang sudah disimpan
+
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        ArrayList<Course> courseList = new ArrayList<>(); // Menggunakan ArrayList untuk penyimpanan dinamis
+        Scanner scanner = new Scanner(System.in); // Membuat objek Scanner untuk membaca input dari konsol
+        String line; // Variabel untuk menyimpan setiap baris input
 
-        System.out.println("Masukkan data course (nim#nama mata kuliah#semester#grade nilai).");
-        // Baris berikut telah dihapus: System.out.println("Ketik '---' untuk berhenti.");
+        // Loop untuk membaca input baris demi baris hingga pengguna mengetik "---"
+        while (scanner.hasNextLine()) { // Memeriksa apakah ada baris input berikutnya
+            line = scanner.nextLine(); // Membaca satu baris input
 
-        while (true) {
-            System.out.print("> ");
-            String inputLine = scanner.nextLine();
-
-            if (inputLine.equals("---")) {
-                break; // Keluar dari loop jika input adalah "---"
+            if (line.equals("---")) { // Jika baris input adalah "---", hentikan proses input
+                break;
             }
 
-            // Memecah baris input berdasarkan delimiter '#'
-            String[] segments = inputLine.split("#");
+            // Memisahkan string input berdasarkan karakter "#"
+            // Contoh input: 12S2203#Object-oriented Programming#3#C
+            String[] parts = line.split("#"); 
 
-            // Memastikan format input benar (memiliki 4 segmen)
-            if (segments.length == 4) {
-                String nim = segments[0].trim();
-                String courseName = segments[1].trim();
-                String semester = segments[2].trim();
-                String grade = segments[3].trim();
+            // Memastikan input memiliki 4 bagian yang diharapkan (code, name, credits, grade)
+            if (parts.length == 4) {
+                String code = parts[0];
+                String name = parts[1];
+                int credits = Integer.parseInt(parts[2]); // Mengubah string SKS menjadi integer
+                String grade = parts[3];
 
-                // Membuat objek Course dan menambahkannya ke ArrayList
-                Course course = new Course(nim, courseName, semester, grade);
-                courseList.add(course);
+                // Membuat objek Course baru dan menyimpannya ke dalam array
+                if (courseCount < courses.length) { // Memastikan array tidak penuh
+                    courses[courseCount] = new Course(code, name, credits, grade);
+                    courseCount++; // Menambah hitungan course
+                } else {
+                    System.err.println("Penyimpanan penuh, tidak bisa menambah course baru.");
+                }
             } else {
-                System.out.println("Format input tidak valid. Harap gunakan: nim#nama mata kuliah#semester#grade nilai");
+                System.err.println("Format input tidak valid: " + line);
             }
         }
 
-        System.out.println("\n--- Data Course yang Tersimpan ---");
-        if (courseList.isEmpty()) {
-            System.out.println("Tidak ada data course yang dimasukkan.");
-        } else {
-            for (Course course : courseList) {
-                System.out.println(course); // Mencetak setiap objek Course menggunakan toString() yang sudah diperbarui
-            }
+        // Setelah semua input diproses, tampilkan semua course yang telah disimpan
+        for (int i = 0; i < courseCount; i++) {
+            System.out.println(courses[i].toString()); // Memanggil toString() untuk format output yang diinginkan
         }
 
-        scanner.close(); // Menutup scanner
+        scanner.close(); // Menutup objek Scanner untuk mencegah kebocoran sumber daya
     }
 }

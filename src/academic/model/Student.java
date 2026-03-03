@@ -6,28 +6,39 @@
 package academic.model;
 
 public class Student {
-    private String studentId;
+    private String nim;
     private String name;
-    private String entryYear; // Tahun masuk
-    private String major;     // Program studi
+    private int entranceYear; // Angkatan
+    private String studyProgram; // Program Studi
 
-    // Konstruktor untuk inisialisasi objek Student
-    public Student(String studentId, String name, String entryYear, String major) {
-        this.studentId = studentId;
+    // Constructor untuk inisialisasi objek Student
+    public Student(String nim, String name, int entranceYear, String studyProgram) {
+        this.nim = nim;
         this.name = name;
-        this.entryYear = entryYear;
-        this.major = major;
+        this.entranceYear = entranceYear;
+        this.studyProgram = studyProgram;
     }
 
-    // Metode toString untuk menghasilkan format output yang diminta (menggunakan '|' sebagai separator)
+    // --- Getters untuk mengakses data Student ---
+    public String getNim() {
+        return nim;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getEntranceYear() {
+        return entranceYear;
+    }
+
+    public String getStudyProgram() {
+        return studyProgram;
+    }
+
+    // Method untuk mengubah representasi objek Student menjadi string sesuai format output
     @Override
     public String toString() {
-        return studentId + "|" + name + "|" + entryYear + "|" + major;
+        return nim + "|" + name + "|" + entranceYear + "|" + studyProgram;
     }
-
-    // Anda bisa menambahkan getter dan setter di sini jika diperlukan
-    // public String getStudentId() { return studentId; }
-    // public String getName() { return name; }
-    // public String getEntryYear() { return entryYear; }
-    // public String getMajor() { return major; }
 }
